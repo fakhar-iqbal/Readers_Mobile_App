@@ -3,6 +3,7 @@ import 'package:blog_app/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {
+  Session? get currentUserSession;
   Future<UserModel> signUpWithEmailAndPassword({
     required String name,
     required String email,
@@ -13,11 +14,17 @@ abstract interface class AuthRemoteDataSource {
     required String email,
     required String password,
   });
+
+  Future<UserModel?> getCurrentUserData();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final SupabaseClient supaBaseClient;
   AuthRemoteDataSourceImpl(this.supaBaseClient);
+
+  @override
+  Session? get currentUserSession => supaBaseClient.auth.currentSession;
+
   @override
   Future<UserModel> signInWithEmailAndPassword({
     required String email,
@@ -27,10 +34,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await supaBaseClient.auth.signInWithPassword(
         password: password,
         email: email,
-        
       );
 
-      if(response.user == null){
+      if (response.user == null) {
         throw const ServerException('User not found!');
       }
 
@@ -39,8 +45,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw ServerException(e.toString());
     }
   }
-
-
 
   @override
   Future<UserModel> signUpWithEmailAndPassword({
@@ -57,11 +61,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
       );
 
-      if(response.user == null){
+      if (response.user == null) {
         throw const ServerException('User not found!');
       }
 
       return UserModel.fromJson(response.user!.toJson());
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel?> getCurrentUserData() async {
+    try {
+      if (currentUserSession != null) {
+        final userData = await supaBaseClient.from('profiles').select().eq(
+              'id',
+              currentUserSession!.user.id,
+            );
+
+        return UserModel.fromJson(userData.first);
+      } else {
+        return null;
+      }
     } catch (e) {
       throw ServerException(e.toString());
     }

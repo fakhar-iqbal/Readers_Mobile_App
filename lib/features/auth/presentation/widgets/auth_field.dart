@@ -8,18 +8,24 @@ class AuthField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller ,
-      decoration: InputDecoration(
-        hintText: hintText,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.98, // 80% of screen width
+      height:60.0,
+      child: TextFormField(
+        controller: controller ,
+        
+        decoration: InputDecoration(
+          hintText: hintText,
+          
+        ),
+        validator: (value){
+          if(value!.isEmpty){
+            return "$hintText is missing!";
+          }
+          return null;
+        },
+        obscureText: isObscureText,
       ),
-      validator: (value){
-        if(value!.isEmpty){
-          return "$hintText is missing!";
-        }
-        return null;
-      },
-      obscureText: isObscureText,
     );
   }
 }

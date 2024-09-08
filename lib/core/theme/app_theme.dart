@@ -15,7 +15,7 @@ class AppTheme{
     ),
     scaffoldBackgroundColor: AppPallete.backgroundColor,
     inputDecorationTheme: InputDecorationTheme(
-      contentPadding: const EdgeInsets.all(27),
+      contentPadding: const EdgeInsets.fromLTRB(27, 17, 27, 20),
       enabledBorder: _border(),
       focusedBorder: _border(AppPallete.gradient2), 
     ),
