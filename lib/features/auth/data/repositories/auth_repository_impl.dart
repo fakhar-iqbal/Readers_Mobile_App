@@ -36,6 +36,7 @@ class AuthRepositoriesImpl implements AuthRepository {
   Future<Either<Failure,User>> _getUser(Future<User> Function() fn,) async{
     try{
       final user = await fn();
+      
       return right(user);
     } on sb.AuthException catch(e){
       return left(Failure(e.message));
@@ -57,5 +58,13 @@ class AuthRepositoriesImpl implements AuthRepository {
       } on ServerException catch(e){
         return left(Failure(e.message));
       }
+  }
+  
+  @override
+  Future<void> signOut() async{
+    final user = await authRemoteDataSource.getCurrentUserData();
+        if(user!=null){
+          authRemoteDataSource.signOut();
+        }
   }
 }

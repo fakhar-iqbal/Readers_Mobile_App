@@ -20,3 +20,12 @@ final class AuthFailure extends AuthState{
 
   const AuthFailure(this.message);
 }
+
+final class AuthNeedsVerification extends AuthState{
+  
+  const AuthNeedsVerification();
+}
+
+final class AuthLoggedOut extends AuthState{
+  const AuthLoggedOut();
+}

@@ -37,6 +37,8 @@ class _SignInPageState extends State<SignInPage> {
           listener: (context, state) {
             if (state is AuthFailure) {
               showSnackBar(context, state.message);
+            }else if(state is AuthNeedsVerification){
+              showSnackBar(context, 'Verify your email from the gmail app');
             }
           },
           builder: (context, state) {

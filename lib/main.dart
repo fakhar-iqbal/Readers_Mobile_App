@@ -37,14 +37,24 @@ class _MyAppState extends State<MyApp> {
     context.read<AuthBloc>().add(AuthIsUserLoggedIn());
   }
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Blog App',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkThemeMode,
-      home: BlocSelector<AppUserCubit, AppUserState, bool>(
+
+
+@override
+Widget build(BuildContext context) {
+  return MaterialApp(
+    title: 'Blog App',
+    debugShowCheckedModeBanner: false,
+    theme: AppTheme.darkThemeMode,
+    home: BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthLoggedOut || state is AuthNeedsVerification) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const SignInPage()),
+            (route) => false,
+          );
+        }
+      },
+      child: BlocSelector<AppUserCubit, AppUserState, bool>(
         selector: (state) {
           return state is AppUserLoggedIn;
         },
@@ -55,6 +65,8 @@ class _MyAppState extends State<MyApp> {
           return const SignInPage();
         },
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

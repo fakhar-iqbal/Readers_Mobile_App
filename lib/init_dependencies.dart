@@ -5,6 +5,7 @@ import 'package:blog_app/features/auth/data/repositories/auth_repository_impl.da
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:blog_app/features/auth/domain/usecases/current_user.dart';
 import 'package:blog_app/features/auth/domain/usecases/user_sign_in.dart';
+import 'package:blog_app/features/auth/domain/usecases/user_sign_out.dart';
 import 'package:blog_app/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -22,7 +23,7 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => supabase.client);
 
   //core
-  serviceLocator.registerLazySingleton(()=> AppUserCubit());
+  serviceLocator.registerLazySingleton(() => AppUserCubit());
 }
 
 void _initAuth() {
@@ -54,6 +55,11 @@ void _initAuth() {
       //bloc
     )
     ..registerFactory(
+      () => UserSignOut(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => CurrentUser(
         serviceLocator(),
       ),
@@ -63,7 +69,8 @@ void _initAuth() {
         userSignUp: serviceLocator(),
         userSignIn: serviceLocator(),
         currentUser: serviceLocator(),
-        appUserCubit: serviceLocator(), 
+        appUserCubit: serviceLocator(),
+        userSignOut: serviceLocator(),
       ),
     );
 }

@@ -197,6 +197,8 @@ Widget build(BuildContext context) {
                                       name: nameController.text.trim(),
                                       password: passwordController.text.trim(),
                                     ));
+
+                                    Navigator.push(context, SignInPage.route());
                               }
                             },
                           ),
