@@ -79,7 +79,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel?> getCurrentUserData() async {
     try {
 
-      if (currentUserSession != null  && currentUserSession!.user.emailConfirmedAt!=null) {
+      if (currentUserSession != null) {
         final userData = await supaBaseClient.from('profiles').select().eq(
               'id',
               currentUserSession!.user.id,

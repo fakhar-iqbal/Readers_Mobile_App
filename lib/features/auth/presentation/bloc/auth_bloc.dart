@@ -41,11 +41,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     try{
-      print('chk1');
       await _userSignOut.signOut();
-      
+      _appUserCubit.updateUser(null);
       emit(const AuthLoggedOut());
-      print('chk2');
+      
+      
 
     } catch(e){
       emit(AuthFailure(e.toString()));
@@ -93,7 +93,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
+  void _emitAuthSuccess(User? user, Emitter<AuthState> emit) {
     _appUserCubit.updateUser(user);
     emit(
       AuthSuccess(user),

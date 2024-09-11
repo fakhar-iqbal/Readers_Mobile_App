@@ -34,9 +34,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthBloc>().add(AuthIsUserLoggedIn());
   }
-
 
 
 @override
@@ -47,26 +45,24 @@ Widget build(BuildContext context) {
     theme: AppTheme.darkThemeMode,
     home: BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthLoggedOut || state is AuthNeedsVerification) {
+        if (state is AuthLoggedOut) {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const SignInPage()),
             (route) => false,
           );
         }
       },
-      child: BlocSelector<AppUserCubit, AppUserState, bool>(
-        selector: (state) {
-          return state is AppUserLoggedIn;
-        },
-        builder: (context, isLoggedIn) {
-          if (isLoggedIn) {
+      child: BlocBuilder<AppUserCubit, AppUserState>(
+        builder: (context, state) {
+          if (state is AppUserLoggedIn) {
             return const BlogPage();
-          }
+          } 
           return const SignInPage();
         },
       ),
     ),
   );
 }
+
 
 }

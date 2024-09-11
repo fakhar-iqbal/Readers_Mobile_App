@@ -129,22 +129,21 @@ class _SignUpPageState extends State<SignUpPage> {
 //     );
 //   }
 // }
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(),
-    body: BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if(state is AuthFailure){
-          showSnackBar(context, state.message);
-        }
-      },
-      builder: (context, state) {
-        if(state is AuthLoading){
-          return const Loader();
-        }
-        return LayoutBuilder(
-          builder: (context, constraints) {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthFailure) {
+            showSnackBar(context, state.message);
+          }
+        },
+        builder: (context, state) {
+          if (state is AuthLoading) {
+            return const Loader();
+          }
+          return LayoutBuilder(builder: (context, constraints) {
             return SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
@@ -161,7 +160,8 @@ Widget build(BuildContext context) {
                           const Spacer(),
                           const Text(
                             'Sign Up.',
-                            style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 40, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
                             height: 20,
@@ -198,7 +198,11 @@ Widget build(BuildContext context) {
                                       password: passwordController.text.trim(),
                                     ));
 
-                                    Navigator.push(context, SignInPage.route());
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) => const SignInPage()),
+                                  (route) => false,
+                                );
                               }
                             },
                           ),
@@ -236,10 +240,9 @@ Widget build(BuildContext context) {
                 ),
               ),
             );
-          }
-        );
-      },
-    ),
-  );
-}
+          });
+        },
+      ),
+    );
+  }
 }
