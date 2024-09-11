@@ -7,13 +7,14 @@ part 'app_user_state.dart';
 class AppUserCubit extends Cubit<AppUserState> {
   AppUserCubit() : super(AppUserInitial());
 
-  void updateUser(User? user){
-    if(user == null){
-      print(12121212);
-      emit(AppUserInitial());
-    }else{
-      print(4343434);
+  void updateUser(User? user) {
+    print('AppUserCubit: Updating user'); // Debug print
+    if (user != null) {
+      print('AppUserCubit: Emitting AppUserLoggedIn'); // Debug print
       emit(AppUserLoggedIn(user));
+    } else {
+      print('AppUserCubit: Emitting AppUserLoggedOut'); // Debug print
+      emit(AppUserLoggedOut());
     }
   }
 }

@@ -29,7 +29,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _appUserCubit = appUserCubit,
         _userSignOut = userSignOut,
         super(AuthInitial()) {
-    on<AuthEvent>((_, emit) => emit(AuthLoading()));
+    on<AuthEvent>((event, emit) {
+      
+      emit(AuthLoading());
+    });
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthSignIn>(_onAuthSignIn);
     on<AuthIsUserLoggedIn>(_isUserLoggedIn);
@@ -40,14 +43,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthSignOut event,
     Emitter<AuthState> emit,
   ) async {
-    try{
+    print('AuthSignOut event handler called'); //
+    try {
+      print('heree');
       await _userSignOut.signOut();
       _appUserCubit.updateUser(null);
+      print('AuthBloc: Emitting AuthLoggedOut'); 
       emit(const AuthLoggedOut());
-      
-      
-
-    } catch(e){
+    } catch (e) {
+      print('AuthBloc: Emitting AuthLoggedOut failure'); 
       emit(AuthFailure(e.toString()));
     }
   }
@@ -57,10 +61,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final res = await _currentUser(NoParams());
-    res.fold(
-      (l) => emit(AuthFailure(l.message)),
-      (r) => _appUserCubit.updateUser(r),
-    );
+
+    res.fold((l) => emit(AuthFailure(l.message)), (user) {
+      _appUserCubit.updateUser(user);
+      emit(AuthSuccess(user));
+    });
   }
 
   void _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
@@ -84,16 +89,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       email: event.email,
       password: event.password,
     ));
+    print(12);
+    print(res);
+    print(13);
 
     res.fold(
       (l) => emit(
         AuthFailure(l.message),
       ),
-      (user) => _emitAuthSuccess(user, emit),
+      (user) {
+        _appUserCubit.updateUser(user);
+        emit(AuthSuccess(user));
+      },
     );
   }
 
-  void _emitAuthSuccess(User? user, Emitter<AuthState> emit) {
+  void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
     _appUserCubit.updateUser(user);
     emit(
       AuthSuccess(user),

@@ -97,12 +97,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
   
-  @override
-  Future<void> signOut() async {
-    if (currentUserSession != null) {
-      supaBaseClient.auth.signOut();
-    }else{
-      throw const ServerException('Error logging out');
-    }
+@override
+Future<void> signOut() async {
+  try {
+    await supaBaseClient.auth.signOut();
+  } catch (e) {
+    throw ServerException('Error logging out: $e');
   }
+}
 }
